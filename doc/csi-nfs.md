@@ -3,7 +3,7 @@
 
 ### 第一步：NFS服务器配置【可在集群外】
 
-要在机器192.168.20.235上配置 NFS 服务器端并共享目录`/home/aiedge/csiTest`，需要执行以下步骤：
+要在机器192.168.xx.xx上配置 NFS 服务器端并共享目录`/home/aiedge/csiTest`，需要执行以下步骤：
 
 1. **安装 NFS 服务器软件：**
    使用以下命令安装 NFS 服务器：
@@ -73,16 +73,16 @@
    >   #配置文件
    >   vi /etc/exports
    >   
-   >   /nfs_share 192.168.20.236(rw,all_squash,sync) 
+   >   /nfs_share 192.168.xx.xx(rw,all_squash,sync) 
    >   #客户端所有用户在访问服务端都会以nobody用户访问，因此可以读写
    >   
    >   #配置文件生效
    >   exportfs -rav 
    >   
-   >   #在192.168.20.236端mount
+   >   #在192.168.xx.xx端mount
    >   sudo mount -t nfs 
    >   #查看
-   >   192.168.20.235:/nfs_share /home/aiedge/mnt
+   >   192.168.xx.xx:/nfs_share /home/aiedge/mnt
    >   aiedge@xx-test-node236:~$ ll /home/aiedge/mnt
    >   total 8
    >   drwxr-x---  2 nobody nogroup 4096 Dec 20 15:01 ./
@@ -105,16 +105,16 @@
 
    ```bash
    sudo systemctl status nfs-kernel-server   # 检查服务状态
-   showmount -e 192.168.20.235               # 显示可用的 NFS 共享
+   showmount -e 192.168.xx.xx               # 显示可用的 NFS 共享
    ```
 
    如果一切设置正确，应该能够看到输出，表明`/home/aiedge/csiTest`目录已经共享出去了。
 
-现在，你已经在192.168.20.235机器上配置好了 NFS 服务器端，并共享了`/home/aiedge/csiTest`目录。其他主机可以使用 NFS 客户端挂载这个共享目录。
+现在，你已经在192.168.xx.xx机器上配置好了 NFS 服务器端，并共享了`/home/aiedge/csiTest`目录。其他主机可以使用 NFS 客户端挂载这个共享目录。
 
 ```bash
 root@xx-test-node239:/home/aiedge# sudo mkdir -p /mnt/nfs
-root@xx-test-node239:/home/aiedge# sudo mount -t nfs 192.168.20.235:/home/aiedge/csiTest /mnt/nfs
+root@xx-test-node239:/home/aiedge# sudo mount -t nfs 192.168.xx.xx:/home/aiedge/csiTest /mnt/nfs
 
 ```
 
@@ -180,7 +180,7 @@ spec:
     readOnly: false
     volumeHandle: unique-volumeid  # #确保它是集群中的唯一 ID
     volumeAttributes:
-      server: 192.168.20.235
+      server: 192.168.xx.xx
       share: /home/aiedge/csiTest/
 ---
 apiVersion: v1
@@ -213,7 +213,7 @@ metadata:
   name: nfs-csi
 provisioner: nfs.csi.k8s.io
 parameters:
-  server: 192.168.20.235
+  server: 192.168.xx.xx
   share: /home/aiedge/csiTest
 reclaimPolicy: Delete
 volumeBindingMode: Immediate
