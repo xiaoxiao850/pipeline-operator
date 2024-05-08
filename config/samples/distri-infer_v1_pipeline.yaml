@@ -1,0 +1,36 @@
+apiVersion: distri-infer.ndsl.cn/v1
+kind: Pipeline
+metadata:
+  labels:
+    app.kubernetes.io/name: pipeline
+    app.kubernetes.io/instance: pipeline-sample
+    app.kubernetes.io/part-of: pipeline-operator
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/created-by: pipeline-operator
+  name: facedetection-pipeline
+  # namespace: pipeline
+spec:
+  # TODO(user): Add fields here
+  steps: 
+    - image: nginx:latest 
+      replicas: 1
+      locations: 
+        - worker-test-252
+        - worker-test-253
+      model: facedetection-1 # 模型名
+      args: 
+        listenPort: "9080" 
+    - image: nginx:latest
+      replicas: 2
+      locations: 
+        - worker-test-252
+        - worker-test-253
+      model: facedetection-2
+      args: {}  
+  listenPort: 9080
+  modelStorage:
+    csiParameter:  
+      server: 192.168.20.235
+      share: /home/aiedge/csiTest 
+    type: nfs
+status: {}
